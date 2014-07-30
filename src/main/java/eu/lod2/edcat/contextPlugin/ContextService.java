@@ -40,13 +40,13 @@ public class ContextService {
                             "       SELECT ?dataset ?count" +
                             "       WHERE {" +
                             "       GRAPH ?ref { " +
-                            "           ?ref nif:sourceUrl ?dataset ." +
+                            "           ?ref <http://persistence.uni-leipzig.org/nlp2rdf/ontologies/nif-core#sourceUrl> ?dataset ." +
                             "           { " +
                             "               SELECT DISTINCT ?ref (COUNT(?tag) AS ?count) " +
                             "               WHERE {" +
                             "                   GRAPH ?graph {" +
-                            "                       ?segment nif:referenceContext ?ref. " +
-                            "                       ?segment nif:anchorOf ?tag ." +
+                            "                       ?segment <http://persistence.uni-leipzig.org/nlp2rdf/ontologies/nif-core#referenceContext> ?ref . " +
+                            "                       ?segment <http://persistence.uni-leipzig.org/nlp2rdf/ontologies/nif-core#nif:anchorOf> ?tag ." +
                             "                       $where " +
                             "                   } " +
                             "               }" +
@@ -71,9 +71,9 @@ public class ContextService {
      */
     private String tagsToWhereClause(String[] tags) {
         if (tags.length==0) return "";
-        String where = "FILTER (str(?tag) = "+tags[0];
+        String where = String.format("FILTER (STR(?tag) = \"%s\"", tags[0]);
         for (int i=1; i<tags.length; i++) {
-            where += String.format(" || str(?tag) = %s ", tags[i]);
+            where += String.format(" || STR(?tag) = \"%s\" ", tags[i]);
         }
         where += ")";
         return where;
