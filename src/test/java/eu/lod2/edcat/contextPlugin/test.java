@@ -1,15 +1,13 @@
 package eu.lod2.edcat.contextPlugin;
 
 import eu.lod2.edcat.format.CompactedListFormatter;
+import eu.lod2.edcat.format.CompactedObjectFormatter;
 import eu.lod2.edcat.format.ResponseFormatter;
 import eu.lod2.edcat.utils.JsonLdContext;
 import org.openrdf.model.Model;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.core.MediaType;
 
 /**
  * Created by yyz on 7/30/14.

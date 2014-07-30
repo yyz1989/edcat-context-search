@@ -44,9 +44,9 @@ public class ContextService {
                             "           { " +
                             "               SELECT DISTINCT ?ref (COUNT(?tag) AS ?count) " +
                             "               WHERE {" +
-                            "                   GRAPH ?graph {" +
+                            "                   GRAPH <http://tfvirt-lod2-dcat/context> {" +
                             "                       ?segment <http://persistence.uni-leipzig.org/nlp2rdf/ontologies/nif-core#referenceContext> ?ref . " +
-                            "                       ?segment <http://persistence.uni-leipzig.org/nlp2rdf/ontologies/nif-core#nif:anchorOf> ?tag ." +
+                            "                       ?segment <http://persistence.uni-leipzig.org/nlp2rdf/ontologies/nif-core#anchorOf> ?tag ." +
                             "                       $where " +
                             "                   } " +
                             "               }" +
