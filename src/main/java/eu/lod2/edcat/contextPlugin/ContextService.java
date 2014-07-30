@@ -4,7 +4,6 @@ import eu.lod2.edcat.utils.DcatURI;
 import eu.lod2.edcat.utils.QueryResult;
 import eu.lod2.query.Db;
 import org.apache.commons.lang3.StringUtils;
-import org.openrdf.model.Model;
 
 import java.util.*;
 
@@ -30,50 +29,40 @@ public class ContextService {
          */
         QueryResult sparqlResults = Db.query("" +
                         " @PREFIX " +
-                        " SELECT ?dataset ?count" +
-                        " WHERE {" +
-                        "    GRAPH ?ref { " +
-                        "    ?ref nif:sourceUrl ?dataset ."+
-                        "    { "+
-                        "       SELECT DISTINCT ?ref (COUNT(?tag) AS ?count) "+
-                        "       WHERE {"+
-                        "         GRAPH ?graph {"+
-                        "           ?segment nif:referenceContext ?ref. " +
-                        "           ?segment nif:anchorOf ?tag ."+
-                        "           $where "+
-                        "         } "+
-                        "       }" +
-                        "       GROUP BY ?ref "+
-                        "    } "+
-                        "  } "+
-                        "}",
+                      " CONSTRUCT { "+
+                      "   ?dataset dct:title ?title."+
+                      "   ?dataset dct:descrption ?description."+
+                      "   ?dataset <http://edcat.tenforce.com/terms#count> ?count "+
+                      " }" +
+                      " WHERE { "+
+                      "   GRAPH ?dataset {" +
+                      "   ?dataset dct:title ?title. "+
+                      "   ?dataset dct:descrption ?description. "+
+                      "   {"+
+                            " SELECT ?dataset ?count" +
+                            " WHERE {" +
+                            "    GRAPH ?ref { " +
+                            "    ?ref nif:sourceUrl ?dataset ."+
+                            "    { "+
+                            "       SELECT DISTINCT ?ref (COUNT(?tag) AS ?count) "+
+                            "       WHERE {"+
+                            "         GRAPH ?graph {"+
+                            "           ?segment nif:referenceContext ?ref. " +
+                            "           ?segment nif:anchorOf ?tag ."+
+                            "           $where "+
+                            "         } "+
+                            "       }" +
+                            "       GROUP BY ?ref "+
+                            "    } "+
+                            "  } "+
+                            "}" +
+                      "   }"+
+                      "  }"+
+                      "}",
                 "where", where);
         return sparqlResults;
     }
 
-    /**
-     * Returns the datasets of a given catalog matching the given where clause
-     * @param where Where clause the datasets must comply to
-     * @param catalogId Id of the catalog to search datasets in
-     *
-     * @return  List of URIs of datasets matching the given where clause in the given catalog
-     */
-    private Map<String, String> selectDataset(String uri) {
-        QueryResult sparqlResults = Db.query("" +
-                        " @PREFIX" +
-                        " SELECT ?title ?description" +
-                        " WHERE {" +
-                        "   GRAPH $graph { " +
-                        "     $graph dct:title ?title."+
-                        "     $graph dct:description ?description."+
-                        "   }" +
-                        " }",
-                        "graph", uri);
-
-        Map<String, String> result = new HashMap<String, String>();
-        if (sparqlResults.size() > 0 ) result=sparqlResults.firstElement();
-        return result;
-    }
 
     /**
      * Converts the given search criteria to a SPARQL where clause that can be injected in a SPARQL query
