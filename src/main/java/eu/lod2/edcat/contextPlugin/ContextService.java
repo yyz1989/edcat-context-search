@@ -1,11 +1,8 @@
 package eu.lod2.edcat.contextPlugin;
 
-import eu.lod2.edcat.utils.DcatURI;
-import eu.lod2.edcat.utils.QueryResult;
 import eu.lod2.query.Db;
-import org.apache.commons.lang3.StringUtils;
-
-import java.util.*;
+import org.openrdf.model.Model;
+import org.openrdf.model.impl.LinkedHashModel;
 
 /**
  * Created by yyz on 7/29/14.
@@ -13,13 +10,12 @@ import java.util.*;
 
 public class ContextService {
 
-    public List<String> searchDatasets(Map<String[], String[]> searchCriteria, Map<String, String> context) {
-        String where = searchCriteriaToWhereClause(searchCriteria, context);
-        List<String> datasets = sparqlSelect(where);
-        return datasets;
+    public Model getDatasetModel(String[] tags) {
+        String where = tagsToWhereClause(tags);
+        return constructDatasetModel(where);
     }
 
-    private Vector<Map<String, String>> selectDatasetURIs(String where) {
+    private Model constructDatasetModel(String where) {
         /**
          * The following SPARQL query contains two levels of queries: the subquery
          * collects all the datasets linked to the catalogs satisfying the constaints
@@ -27,97 +23,60 @@ public class ContextService {
          * constraints for datasets. The returned values are qualified catalogs linking
          * to the qualified datasets.
          */
-        QueryResult sparqlResults = Db.query("" +
-                        " @PREFIX " +
-                      " CONSTRUCT { "+
-                      "   ?dataset dct:title ?title."+
-                      "   ?dataset dct:descrption ?description."+
-                      "   ?dataset <http://edcat.tenforce.com/terms#count> ?count "+
-                      " }" +
-                      " WHERE { "+
-                      "   GRAPH ?dataset {" +
-                      "   ?dataset dct:title ?title. "+
-                      "   ?dataset dct:descrption ?description. "+
-                      "   {"+
-                            " SELECT ?dataset ?count" +
-                            " WHERE {" +
-                            "    GRAPH ?ref { " +
-                            "    ?ref nif:sourceUrl ?dataset ."+
-                            "    { "+
-                            "       SELECT DISTINCT ?ref (COUNT(?tag) AS ?count) "+
-                            "       WHERE {"+
-                            "         GRAPH ?graph {"+
-                            "           ?segment nif:referenceContext ?ref. " +
-                            "           ?segment nif:anchorOf ?tag ."+
-                            "           $where "+
-                            "         } "+
+        if (where.equals("")) return new LinkedHashModel();
+        else {
+            Model sparqlResults = Db.construct("" +
+                            " @PREFIX " +
+                            " CONSTRUCT { " +
+                            "   ?dataset dct:title ?title." +
+                            "   ?dataset dct:description ?description." +
+                            "   ?dataset <http://edcat.tenforce.com/terms#count> ?count. " +
+                            " }" +
+                            " WHERE { " +
+                            "   GRAPH ?dataset {" +
+                            "   ?dataset dct:title ?title. " +
+                            "   ?dataset dct:description ?description. " +
+                            "   {" +
+                            "       SELECT ?dataset ?count" +
+                            "       WHERE {" +
+                            "       GRAPH ?ref { " +
+                            "           ?ref nif:sourceUrl ?dataset ." +
+                            "           { " +
+                            "               SELECT DISTINCT ?ref (COUNT(?tag) AS ?count) " +
+                            "               WHERE {" +
+                            "                   GRAPH ?graph {" +
+                            "                       ?segment nif:referenceContext ?ref. " +
+                            "                       ?segment nif:anchorOf ?tag ." +
+                            "                       $where " +
+                            "                   } " +
+                            "               }" +
+                            "               GROUP BY ?ref " +
+                            "           } " +
+                            "       } " +
                             "       }" +
-                            "       GROUP BY ?ref "+
-                            "    } "+
-                            "  } "+
-                            "}" +
-                      "   }"+
-                      "  }"+
-                      "}",
-                "where", where);
-        return sparqlResults;
+                            "   }" +
+                            " }" +
+                            "}",
+                    "where", where);
+            return sparqlResults;
+        }
     }
 
 
     /**
      * Converts the given search criteria to a SPARQL where clause that can be injected in a SPARQL query
-     * @param searchCriteria  Map with search criteria mapping keywords to a value (e.g. [distribution][title] -> ["My title"])
-     * @param context Context to convert the keywords to predicate URIs
+     * @param tags  Map with search criteria mapping keywords to a value (e.g. [distribution][title] -> ["My title"])
      *
      * @return A SPARQL where clause as String to inject in a SPARQL query
      */
-    private String searchCriteriaToWhereClause(Map<String[], String[]> searchCriteria, Map<String, String> context) {
-        int count = 0;
-        String where = "";
-
-        for (String[] keywords : searchCriteria.keySet()) {
-            String[] predicates = keywordsToPredicates(keywords, context);
-            System.out.println(Arrays.toString(predicates));
-            String[] values = searchCriteria.get(keywords);
-            System.out.println(Arrays.toString(values));
-            for (String value : values) {
-                if (isSimpleStringValue(value)) {
-                    String tmpVar = "?" + count;
-                    where += String.format(" ?concept %s %s .", StringUtils.join(predicates, "/"), tmpVar);
-                    where += String.format(" FILTER(str(%s)=%s)", tmpVar, value);
-                    count++;
-                } else
-                    where += String.format(" ?concept %s %s .", StringUtils.join(predicates, "/"), value);
-            }
+    private String tagsToWhereClause(String[] tags) {
+        if (tags.length==0) return "";
+        String where = "FILTER (?tag = "+tags[0];
+        for (int i=1; i<tags.length; i++) {
+            where += String.format(" || ?tag = %s ", tags[i]);
         }
+        where += ")";
         return where;
     }
 
-    /**
-     * Returns the predicate URIs of the keywords in the String array
-     *
-     * @param keywords  Array with keywords
-     * @param context Context to convert the keywords to a predicate URI.
-     *                If the keyword is not found in the keywordMap, the keyword is considered to be a predicate URI.
-     *
-     * @return String Array with the predicate URIs (e.g. [<http://www.w3.org/ns/dcat#distribution>, <http://purl.org/dc/terms/title>])
-     */
-    private String[] keywordsToPredicates(String[] keywords, Map<String, String> context) {
-        String[] predicates = new String[keywords.length];
-        for (int i = 0; i < keywords.length; i++) {
-            String uri = context.get(keywords[i]);
-            if (uri == null)
-                uri = keywords[i]; // use the keyword itself as predicate URI
-            predicates[i] = "<" + uri + ">";
-            // TODO handle case where predicate starts with @ (eg. uri -> @id)
-        }
-        return predicates;
-    }
-
-    /**
-     * Returns whether the given value is a simple String (i.e. not a URI, no language annotation, etc.)
-     */
-    private boolean isSimpleStringValue(String value) {
-        return value != null && value.endsWith("\"");
-    }
 }
