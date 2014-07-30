@@ -71,9 +71,9 @@ public class ContextService {
      */
     private String tagsToWhereClause(String[] tags) {
         if (tags.length==0) return "";
-        String where = "FILTER (?tag = "+tags[0];
+        String where = "FILTER (str(?tag) = "+tags[0];
         for (int i=1; i<tags.length; i++) {
-            where += String.format(" || ?tag = %s ", tags[i]);
+            where += String.format(" || str(?tag) = %s ", tags[i]);
         }
         where += ")";
         return where;
