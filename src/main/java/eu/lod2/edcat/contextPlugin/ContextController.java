@@ -1,9 +1,7 @@
 package eu.lod2.edcat.contextPlugin;
 
-import eu.lod2.edcat.contextPlugin.hooks.contexts.PostSearchContext;
-import eu.lod2.edcat.contextPlugin.hooks.contexts.PreSearchContext;
-import eu.lod2.edcat.contextPlugin.hooks.handlers.PostSearchHandler;
-import eu.lod2.edcat.contextPlugin.hooks.handlers.PreSearchHandler;
+import eu.lod2.edcat.contextPlugin.hooks.contexts.*;
+import eu.lod2.edcat.contextPlugin.hooks.handlers.*;
 import eu.lod2.edcat.format.CompactedListFormatter;
 import eu.lod2.edcat.format.CompactedObjectFormatter;
 import eu.lod2.edcat.format.ResponseFormatter;
@@ -60,15 +58,18 @@ public class ContextController {
     @RequestMapping(value=LOAD_PATH, method = RequestMethod.POST,
             consumes = "application/json;charset=UTF-8")
     public ResponseEntity<Object> contextLoad(HttpServletRequest request) throws Throwable {
+        HookManager.callHook(PreLoadHandler.class, "handlePreLoad", new PreLoadContext(request));
         InputStream in=request.getInputStream();
         JsonLD json= JsonLD.parse(in);
         in.close();
         json.setContext( jsonLdContext );
         Model statements=json.getStatements();
+        HookManager.callHook(AtLoadHandler.class, "handleAtLoad", new AtLoadContext(request, statements));
         Db.add(statements, new URIImpl("http://lod2.tenforce.com/edcat/context/config/"));
         ResponseFormatter formatter = new CompactedObjectFormatter( jsonLdContext );
         Object body = formatter.format( statements );
         ResponseEntity<Object> response = new ResponseEntity<Object>( body, new HttpHeaders(), HttpStatus.OK );
+        HookManager.callHook(PostLoadHandler.class, "handlePostLoad", new PostLoadContext(request, response, statements));
         return response;
     }
 }

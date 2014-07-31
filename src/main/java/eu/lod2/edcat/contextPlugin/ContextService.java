@@ -3,25 +3,41 @@ package eu.lod2.edcat.contextPlugin;
 import eu.lod2.query.Db;
 import org.openrdf.model.Model;
 import org.openrdf.model.impl.LinkedHashModel;
+import org.springframework.stereotype.Service;
 
 /**
  * Created by yyz on 7/29/14.
  */
-
+@Service
 public class ContextService {
-
+    /**
+     * Given a list of tags, return a graph containing the title, description,
+     * number of tags found of all qualified datasets
+     * @param tags a list of tags to be matched against datasets
+     * @return a new graph containing the title, description, number of tags found
+     * of all qualified datasets
+     */
     public Model getDatasetModel(String[] tags) {
         String where = tagsToWhereClause(tags);
         return constructDatasetModel(where);
     }
 
+    /**
+     * Given a list of tags, return all the datasets containing at least one tag
+     * @param where a sparql where clause describing tags to be matched
+     *              against datasets
+     * @return a new graph containing the title, description, number of tags found
+     * of all qualified datasets
+     */
     private Model constructDatasetModel(String where) {
         /**
-         * The following SPARQL query contains two levels of queries: the subquery
-         * collects all the datasets linked to the catalogs satisfying the constaints
-         * for catalogs; while the parent query collects all the datasets satisfying the
-         * constraints for datasets. The returned values are qualified catalogs linking
-         * to the qualified datasets.
+         * The following SPARQL query contains 3 levels of queries: the bottom
+         * query collects all the referenced URIs containing at least one given tag;
+         * the middle level query collects the source URIs of referenced URIs which
+         * actually represent the datasets; the top level query collects the title,
+         * description of datasets containing at least one given tag and provide the
+         * number of tags found in the same dataset. The final result will be
+         * constructed to a new graph.
          */
         if (where.equals("")) return new LinkedHashModel();
         else {
@@ -44,7 +60,7 @@ public class ContextService {
                             "           { " +
                             "               SELECT DISTINCT ?ref (COUNT(?tag) AS ?count) " +
                             "               WHERE {" +
-                            "                   GRAPH <http://tfvirt-lod2-dcat/context> {" +
+                            "                   GRAPH <http://lod2.tenforce.com/edcat/context/config/> {" +
                             "                       ?segment <http://persistence.uni-leipzig.org/nlp2rdf/ontologies/nif-core#referenceContext> ?ref . " +
                             "                       ?segment <http://persistence.uni-leipzig.org/nlp2rdf/ontologies/nif-core#anchorOf> ?tag ." +
                             "                       $where " +
@@ -64,8 +80,9 @@ public class ContextService {
 
 
     /**
-     * Converts the given search criteria to a SPARQL where clause that can be injected in a SPARQL query
-     * @param tags  Map with search criteria mapping keywords to a value (e.g. [distribution][title] -> ["My title"])
+     * Converts the given tags marked by the context app to a SPARQL where
+     * clause that can be injected in a SPARQL query
+     * @param tags  tags found by the context app in a given text
      *
      * @return A SPARQL where clause as String to inject in a SPARQL query
      */
