@@ -4,15 +4,15 @@ import eu.lod2.hooks.contexts.base.PreContextBase;
 
 import javax.servlet.http.HttpServletRequest;
 
-public class PreContext implements PreContextBase {
+public class PreLoadContext implements PreContextBase {
 
   /** Request as sent by the user. */
   private HttpServletRequest request;
 
   /**
-   * Constructs a new PostContext with all variables set.
+   * Constructs a new PreLoadContext with all variables set.
    */
-  public PreContext(HttpServletRequest request){
+  public PreLoadContext(HttpServletRequest request){
     setRequest( request );
   }
 

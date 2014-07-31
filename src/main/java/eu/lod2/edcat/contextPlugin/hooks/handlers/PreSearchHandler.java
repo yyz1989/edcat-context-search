@@ -1,6 +1,6 @@
 package eu.lod2.edcat.contextPlugin.hooks.handlers;
 
-import eu.lod2.edcat.contextPlugin.hooks.contexts.PreContext;
+import eu.lod2.edcat.contextPlugin.hooks.contexts.PreSearchContext;
 import eu.lod2.hooks.handlers.HookHandler;
 
 /**
@@ -11,7 +11,7 @@ import eu.lod2.hooks.handlers.HookHandler;
  * The supplied {@code args} are the same as the ones specified in this interface.
  * The name for this hook is {@code "eu.lod2.edcat.plugins.sparqlSearch.hooks.handlers.PreSearchHandler"}.
  */
-public interface PreHandler extends HookHandler {
+public interface PreSearchHandler extends HookHandler {
 
   /**
    * Called before a Search action is constructed
@@ -20,8 +20,8 @@ public interface PreHandler extends HookHandler {
    *
    * @param context Contains all information the consumer provides for this provider.
    * @throws eu.lod2.hooks.handlers.dcat.ActionAbortException Throwing this exception will abort the Search action.
-   * @see eu.lod2.edcat.contextPlugin.hooks.contexts.PreContext
+   * @see eu.lod2.edcat.contextPlugin.hooks.contexts.PreSearchContext
    */
-  public void handlePreSearch(PreContext context);
+  public void handlePreSearch(PreSearchContext context);
 
 }

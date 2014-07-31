@@ -6,7 +6,7 @@ import org.springframework.http.ResponseEntity;
 
 import javax.servlet.http.HttpServletRequest;
 
-public class PostContext implements PostContextBase {
+public class PostSearchContext implements PostContextBase {
 
   /** Request as sent by the user. */
   private HttpServletRequest request;
@@ -18,9 +18,9 @@ public class PostContext implements PostContextBase {
   private ResponseEntity<Object> response;
 
   /**
-   * Constructs a new PostContext with all variables set.
+   * Constructs a new PostSearchContext with all variables set.
    */
-  public PostContext( HttpServletRequest request, ResponseEntity<Object> response , Model statements ){
+  public PostSearchContext(HttpServletRequest request, ResponseEntity<Object> response, Model statements){
     setRequest( request );
     setResponse( response );
     setStatements( statements );
