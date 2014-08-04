@@ -41,7 +41,7 @@ public class ContextController {
     @Autowired
     private ContextService contextService;
 
-    //GET ../edcat/contexts/a,b,c,d
+    //GET ../edcat/contexts/search/a,b,c,d
     @RequestMapping(value = SEARCH_PATH, method = RequestMethod.GET,
             produces = "application/json;charset=UTF-8")
     public ResponseEntity<Object> contextSearch(HttpServletRequest request, @PathVariable(value="tags") String[] tags) throws Throwable{
@@ -55,6 +55,7 @@ public class ContextController {
         return response;
     }
 
+    //POST ../edcat/contexts/load
     @RequestMapping(value=LOAD_PATH, method = RequestMethod.POST,
             consumes = "application/json;charset=UTF-8")
     public ResponseEntity<Object> contextLoad(HttpServletRequest request) throws Throwable {
