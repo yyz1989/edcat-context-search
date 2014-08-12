@@ -32,7 +32,7 @@ public class test {
         return;
     }
     */
-        String tags[] = {"test"};
+        String tags[] = {"test1","test2","test"};
         ContextSearchService contextSearchService =new ContextSearchService();
         try {
             JsonLdContext jsonLdContext = new JsonLdContext(JsonLdContext.Kind.Dataset);
@@ -40,7 +40,7 @@ public class test {
             ResponseFormatter formatter=new CompactedListFormatter(jsonLdContext);
             Object body=formatter.format(statements);
             ResponseEntity<Object> response = new ResponseEntity<Object>(body, new HttpHeaders(), HttpStatus.OK);
-            System.out.println(response);
+            System.out.println(response.toString());
         } catch (Throwable e) {
             e.printStackTrace();
         }
