@@ -1,0 +1,7 @@
+<plugin>
+    <name>Context search plugin</name>
+    <description>Enables searching by NIF tags as found in AKSW/Context</description>
+    <groupId>eu.lod2.edcat</groupId>
+    <artifactId>context-plugin</artifactId>
+    <version>0.9.9-SNAPSHOT</version>
+</plugin>
