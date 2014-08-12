@@ -12,7 +12,7 @@ import org.openrdf.model.impl.URIImpl;
 public class loadTest {
     public static void main(String[] args) throws Throwable{
         JsonLdContext jsonLdContext=new
-                JsonLdContext(ContextController.class.getResource("/eu/lod2/edcat/jsonld/nif.jsonld"));
+                JsonLdContext(ContextSearchController.class.getResource("/eu/lod2/edcat/jsonld/nif.jsonld"));
         String nif="{\n" +
                 "  \"@context\": {\"nif\":\"http://persistence.uni-leipzig.org/nlp2rdf/ontologies/nif-core#\"},\n" +
                 "  \"nif:title\": \"test\",\n" +

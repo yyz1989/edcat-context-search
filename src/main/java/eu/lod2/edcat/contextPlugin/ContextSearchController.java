@@ -29,17 +29,17 @@ import java.io.InputStream;
  * Created by yyz on 7/29/14.
  */
 @Controller
-public class ContextController {
+public class ContextSearchController {
 
     private final Logger logger= LoggerFactory.getLogger(this.getClass());
     public static final String SEARCH_PATH= "/contexts/search/{tags[]}";
     public static final String LOAD_PATH="/contexts/load";
     public static final String CONTEXT_PATH="http://tfvirt-lod2-dcat/contexts";
     private final JsonLdContext jsonLdContext=new
-            JsonLdContext(ContextController.class.getResource("/eu/lod2/edcat/jsonld/nif.jsonld"));
+            JsonLdContext(ContextSearchController.class.getResource("/eu/lod2/edcat/jsonld/nif.jsonld"));
 
     @Autowired
-    private ContextService contextService;
+    private ContextSearchService contextSearchService;
 
     //GET ../edcat/contexts/search/a,b,c,d
     @RequestMapping(value = SEARCH_PATH, method = RequestMethod.GET,
@@ -47,7 +47,7 @@ public class ContextController {
     public ResponseEntity<Object> contextSearch(HttpServletRequest request, @PathVariable(value="tags") String[] tags) throws Throwable{
         HookManager.callHook(PreSearchHandler.class, "handlePreSearch", new PreSearchContext(request));
         JsonLdContext jsonLdContext = new JsonLdContext(JsonLdContext.Kind.Dataset);
-        Model statements=contextService.getDatasetModel(tags);
+        Model statements= contextSearchService.getDatasetModel(tags);
         ResponseFormatter formatter=new CompactedListFormatter(jsonLdContext);
         Object body=formatter.format(statements);
         ResponseEntity<Object> response = new ResponseEntity<Object>(body, new HttpHeaders(), HttpStatus.OK);
