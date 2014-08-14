@@ -1,7 +1,6 @@
 package eu.lod2.edcat.contextPlugin;
 
 import eu.lod2.edcat.format.CompactedListFormatter;
-import eu.lod2.edcat.format.CompactedObjectFormatter;
 import eu.lod2.edcat.format.ResponseFormatter;
 import eu.lod2.edcat.utils.JsonLdContext;
 import org.openrdf.model.Model;
@@ -33,15 +32,15 @@ public class test {
         return;
     }
     */
-        String tags[] = {"test"};
-        ContextService contextService=new ContextService();
+        String tags[] = {"test1","test2","test"};
+        ContextSearchService contextSearchService =new ContextSearchService();
         try {
             JsonLdContext jsonLdContext = new JsonLdContext(JsonLdContext.Kind.Dataset);
-            Model statements=contextService.getDatasetModel(tags);
+            Model statements= contextSearchService.getDatasetModel(tags);
             ResponseFormatter formatter=new CompactedListFormatter(jsonLdContext);
             Object body=formatter.format(statements);
             ResponseEntity<Object> response = new ResponseEntity<Object>(body, new HttpHeaders(), HttpStatus.OK);
-            System.out.println(response);
+            System.out.println(response.toString());
         } catch (Throwable e) {
             e.printStackTrace();
         }

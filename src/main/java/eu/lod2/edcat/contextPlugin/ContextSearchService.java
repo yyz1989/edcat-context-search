@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
  * Created by yyz on 7/29/14.
  */
 @Service
-public class ContextService {
+public class ContextSearchService {
     /**
      * Given a list of tags, return a graph containing the title, description,
      * number of tags found of all qualified datasets

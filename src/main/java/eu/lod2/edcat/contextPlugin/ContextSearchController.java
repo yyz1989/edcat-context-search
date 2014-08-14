@@ -18,9 +18,9 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.InputStream;
@@ -29,25 +29,26 @@ import java.io.InputStream;
  * Created by yyz on 7/29/14.
  */
 @Controller
-public class ContextController {
+public class ContextSearchController {
 
     private final Logger logger= LoggerFactory.getLogger(this.getClass());
-    public static final String SEARCH_PATH= "/contexts/search/{tags[]}";
+    public static final String SEARCH_PATH= "/contexts/search";
     public static final String LOAD_PATH="/contexts/load";
     public static final String CONTEXT_PATH="http://tfvirt-lod2-dcat/contexts";
     private final JsonLdContext jsonLdContext=new
-            JsonLdContext(ContextController.class.getResource("/eu/lod2/edcat/jsonld/nif.jsonld"));
+            JsonLdContext(ContextSearchController.class.getResource("/eu/lod2/edcat/jsonld/nif.jsonld"));
 
     @Autowired
-    private ContextService contextService;
+    private ContextSearchService contextSearchService;
 
-    //GET ../edcat/contexts/search/a,b,c,d
+    //GET ../edcat/contexts/search?tags=tag1,tag2,tag3,...
     @RequestMapping(value = SEARCH_PATH, method = RequestMethod.GET,
             produces = "application/json;charset=UTF-8")
-    public ResponseEntity<Object> contextSearch(HttpServletRequest request, @PathVariable(value="tags") String[] tags) throws Throwable{
+    public ResponseEntity<Object> contextSearch(HttpServletRequest request, @RequestParam(value = "tags") String queryParams) throws Throwable{
         HookManager.callHook(PreSearchHandler.class, "handlePreSearch", new PreSearchContext(request));
         JsonLdContext jsonLdContext = new JsonLdContext(JsonLdContext.Kind.Dataset);
-        Model statements=contextService.getDatasetModel(tags);
+        String[] tags=queryParams.split(",");
+        Model statements= contextSearchService.getDatasetModel(tags);
         ResponseFormatter formatter=new CompactedListFormatter(jsonLdContext);
         Object body=formatter.format(statements);
         ResponseEntity<Object> response = new ResponseEntity<Object>(body, new HttpHeaders(), HttpStatus.OK);
