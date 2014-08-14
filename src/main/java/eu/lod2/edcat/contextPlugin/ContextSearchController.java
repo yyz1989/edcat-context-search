@@ -41,14 +41,14 @@ public class ContextSearchController {
     @Autowired
     private ContextSearchService contextSearchService;
 
-    //GET ../edcat/contexts/search?tags=tag1,tag2,tag3,...
+    //GET ../edcat/contexts/search?tagIds=Id1,Id2,Id3,...
     @RequestMapping(value = SEARCH_PATH, method = RequestMethod.GET,
             produces = "application/json;charset=UTF-8")
     public ResponseEntity<Object> contextSearch(HttpServletRequest request, @RequestParam(value = "tags") String queryParams) throws Throwable{
         HookManager.callHook(PreSearchHandler.class, "handlePreSearch", new PreSearchContext(request));
         JsonLdContext jsonLdContext = new JsonLdContext(JsonLdContext.Kind.Dataset);
-        String[] tags=queryParams.split(",");
-        Model statements= contextSearchService.getDatasetModel(tags);
+        String[] tagIds=queryParams.split(",");
+        Model statements= contextSearchService.getDatasetModel(tagIds);
         ResponseFormatter formatter=new CompactedListFormatter(jsonLdContext);
         Object body=formatter.format(statements);
         ResponseEntity<Object> response = new ResponseEntity<Object>(body, new HttpHeaders(), HttpStatus.OK);

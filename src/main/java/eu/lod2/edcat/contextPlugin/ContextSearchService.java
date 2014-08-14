@@ -13,12 +13,12 @@ public class ContextSearchService {
     /**
      * Given a list of tags, return a graph containing the title, description,
      * number of tags found of all qualified datasets
-     * @param tags a list of tags to be matched against datasets
+     * @param tagIds a list of Ids of tags to be matched against datasets
      * @return a new graph containing the title, description, number of tags found
      * of all qualified datasets
      */
-    public Model getDatasetModel(String[] tags) {
-        String where = tagsToWhereClause(tags);
+    public Model getDatasetModel(String[] tagIds) {
+        String where = tagsToWhereClause(tagIds);
         return constructDatasetModel(where);
     }
 
@@ -62,7 +62,7 @@ public class ContextSearchService {
                             "               WHERE {" +
                             "                   GRAPH <http://lod2.tenforce.com/edcat/context/config/> {" +
                             "                       ?segment <http://persistence.uni-leipzig.org/nlp2rdf/ontologies/nif-core#referenceContext> ?ref . " +
-                            "                       ?segment <http://persistence.uni-leipzig.org/nlp2rdf/ontologies/nif-core#anchorOf> ?tag ." +
+                            "                       ?segment <http://purl.org/dc/terms/identifier> ?tagId ." +
                             "                       $where " +
                             "                   } " +
                             "               }" +
@@ -82,15 +82,15 @@ public class ContextSearchService {
     /**
      * Converts the given tags marked by the context app to a SPARQL where
      * clause that can be injected in a SPARQL query
-     * @param tags  tags found by the context app in a given text
+     * @param tagIds  Ids of tags found by the context app in a given text
      *
      * @return A SPARQL where clause as String to inject in a SPARQL query
      */
-    private String tagsToWhereClause(String[] tags) {
-        if (tags.length==0) return "";
-        String where = String.format("FILTER (STR(?tag) = \"%s\"", tags[0]);
-        for (int i=1; i<tags.length; i++) {
-            where += String.format(" || STR(?tag) = \"%s\" ", tags[i]);
+    private String tagsToWhereClause(String[] tagIds) {
+        if (tagIds.length==0) return "";
+        String where = String.format("FILTER (STR(?tagId) = \"%s\"", tagIds[0]);
+        for (int i=1; i<tagIds.length; i++) {
+            where += String.format(" || STR(?tagId) = \"%s\" ", tagIds[i]);
         }
         where += ")";
         return where;
