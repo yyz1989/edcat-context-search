@@ -50,13 +50,14 @@ public class ContextSearchService {
                             " }" +
                             " WHERE { " +
                             "   GRAPH ?dataset {" +
+                            "   ?dataset <http://lod2.tenforce.com/oldIdentifier> ?source. " +
                             "   ?dataset dct:title ?title. " +
                             "   ?dataset dct:description ?description. " +
                             "   {" +
-                            "       SELECT ?dataset ?count" +
+                            "       SELECT ?source ?count" +
                             "       WHERE {" +
                             "       GRAPH ?ref { " +
-                            "           ?ref <http://persistence.uni-leipzig.org/nlp2rdf/ontologies/nif-core#sourceUrl> ?dataset ." +
+                            "           ?ref <http://persistence.uni-leipzig.org/nlp2rdf/ontologies/nif-core#sourceUrl> ?source ." +
                             "           { " +
                             "               SELECT DISTINCT ?ref (COUNT(?tag) AS ?count) " +
                             "               WHERE {" +
