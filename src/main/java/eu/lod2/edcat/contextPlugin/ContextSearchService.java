@@ -46,7 +46,7 @@ public class ContextSearchService {
                             " CONSTRUCT { " +
                             "   ?dataset dct:title ?title." +
                             "   ?dataset dct:description ?description." +
-                            "   ?dataset <http://edcat.tenforce.com/terms#count> ?count. " +
+                            "   ?dataset <http://lod2.tenforce.com/tagAmount> ?count. " +
                             " }" +
                             " WHERE { " +
                             "   GRAPH ?dataset {" +
@@ -56,10 +56,10 @@ public class ContextSearchService {
                             "   {" +
                             "       SELECT ?source ?count" +
                             "       WHERE {" +
-                            "       GRAPH ?ref { " +
+                            "       GRAPH <http://lod2.tenforce.com/edcat/context/config/> { " +
                             "           ?ref <http://persistence.uni-leipzig.org/nlp2rdf/ontologies/nif-core#sourceUrl> ?source ." +
                             "           { " +
-                            "               SELECT DISTINCT ?ref (COUNT(?tag) AS ?count) " +
+                            "               SELECT DISTINCT ?ref (COUNT(?tagId) AS ?count) " +
                             "               WHERE {" +
                             "                   GRAPH <http://lod2.tenforce.com/edcat/context/config/> {" +
                             "                       ?segment <http://persistence.uni-leipzig.org/nlp2rdf/ontologies/nif-core#referenceContext> ?ref . " +

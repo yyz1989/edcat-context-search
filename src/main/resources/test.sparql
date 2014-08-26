@@ -1,0 +1,32 @@
+
+                             CONSTRUCT {
+                               ?dataset <http://purl.org/dc/terms/title> ?title.
+                               ?dataset <http://purl.org/dc/terms/description> ?description.
+                               ?dataset <http://lod2.tenforce.com/tagAmount> ?count.
+                             }
+                             WHERE {
+                               GRAPH ?dataset {
+                               ?dataset <http://lod2.tenforce.com/oldIdentifier> ?source.
+                               ?dataset <http://purl.org/dc/terms/title> ?title.
+                               ?dataset <http://purl.org/dc/terms/description> ?description.
+                               {
+                                   SELECT ?source ?count
+                                   WHERE {
+                                   GRAPH <http://lod2.tenforce.com/edcat/context/config/> {
+                                       ?ref <http://persistence.uni-leipzig.org/nlp2rdf/ontologies/nif-core#sourceUrl> ?source .
+                                       {
+                                           SELECT DISTINCT ?ref (COUNT(?tagId) AS ?count)
+                                           WHERE {
+                                               GRAPH <http://lod2.tenforce.com/edcat/context/config/> {
+                                                   ?segment <http://persistence.uni-leipzig.org/nlp2rdf/ontologies/nif-core#referenceContext> ?ref .
+                                                   ?segment <http://purl.org/dc/terms/identifier> ?tagId .
+                                                   filter(str(?tagId)="53a4a512cf5dd21815bc86ee"||str(?tagId)="53a4a512cf5dd21815bc86e2")
+                                               }
+                                           }
+                                           GROUP BY ?ref
+                                       }
+                                   }
+                                   }
+                               }
+                             }
+                            }

@@ -34,7 +34,6 @@ public class ContextSearchController {
     private final Logger logger= LoggerFactory.getLogger(this.getClass());
     public static final String SEARCH_PATH= "/contexts/search";
     public static final String LOAD_PATH="/contexts/load";
-    public static final String CONTEXT_PATH="http://tfvirt-lod2-dcat/contexts";
     private final JsonLdContext jsonLdContext=new
             JsonLdContext(ContextSearchController.class.getResource("/eu/lod2/edcat/jsonld/nif.jsonld"));
 
@@ -44,7 +43,7 @@ public class ContextSearchController {
     //GET ../edcat/contexts/search?tagIds=Id1,Id2,Id3,...
     @RequestMapping(value = SEARCH_PATH, method = RequestMethod.GET,
             produces = "application/json;charset=UTF-8")
-    public ResponseEntity<Object> contextSearch(HttpServletRequest request, @RequestParam(value = "tags") String queryParams) throws Throwable{
+    public ResponseEntity<Object> contextSearch(HttpServletRequest request, @RequestParam(value = "tagIds") String queryParams) throws Throwable{
         HookManager.callHook(PreSearchHandler.class, "handlePreSearch", new PreSearchContext(request));
         JsonLdContext jsonLdContext = new JsonLdContext(JsonLdContext.Kind.Dataset);
         String[] tagIds=queryParams.split(",");
