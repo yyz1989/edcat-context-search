@@ -19,8 +19,8 @@
                                            WHERE {
                                                GRAPH <http://lod2.tenforce.com/edcat/context/config/> {
                                                    ?segment <http://persistence.uni-leipzig.org/nlp2rdf/ontologies/nif-core#referenceContext> ?ref .
-                                                   ?segment <http://purl.org/dc/terms/identifier> ?tagId .
-                                                   filter(str(?tagId)="53a4a512cf5dd21815bc86ee"||str(?tagId)="53a4a512cf5dd21815bc86e2")
+                                                   ?segment <http://www.w3.org/2005/11/its/rdf#taIdentRef> ?tagId .
+                                                   filter(str(?tagId)="http://dbpedia.org/resource/Communes_of_Switzerland"||str(?tagId)="http://dbpedia.org/resource/Gemünden_am_Main")
                                                }
                                            }
                                            GROUP BY ?ref

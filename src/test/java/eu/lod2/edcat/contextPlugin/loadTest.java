@@ -17,7 +17,10 @@ public class loadTest {
                 "  \"@context\": {\"nif\":\"http://persistence.uni-leipzig.org/nlp2rdf/ontologies/nif-core#\"},\n" +
                 "  \"nif:title\": \"test\",\n" +
                 "  \"@type\": [\"nif:String\",\"nif:Word\",\"nif:RFC5147String\"],\n" +
-                "  \"@id\":\"http://127.0.0.1:8080/context/article/53a49fbdcf5dd21815bbd77a#char=151,163\"\n" +
+                "  \"@id\":\"http://127.0.0.1:8080/context/article/53a49fbdcf5dd21815bbd77a#char=151,163\",\n" +
+                "  \"http://www.w3.org/2005/11/its/rdf#taIdentRef\":" +
+                "       {\"@id\":\"http://dbpedia.org/resource/Test\"}, \n" +
+                "  \"nif:referenceContext\":{\"@id\":\"http://127.0.0.1:8080/context/article/53a49fbdcf5dd21815bbd77a#char=0,178>\"}\n" +
                 "}";
         JsonLD json= JsonLD.parse(nif);
         json.setContext( jsonLdContext );

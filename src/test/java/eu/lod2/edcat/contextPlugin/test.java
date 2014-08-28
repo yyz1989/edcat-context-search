@@ -32,7 +32,7 @@ public class test {
         return;
     }
     */
-        String tags[] = {"test1","test2","test"};
+        String tags[] = {"http://dbpedia.org/resource/Communes_of_Switzerland","http://dbpedia.org/resource/Gemünden_am_Main"};
         ContextSearchService contextSearchService =new ContextSearchService();
         try {
             JsonLdContext jsonLdContext = new JsonLdContext(JsonLdContext.Kind.Dataset);

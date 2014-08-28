@@ -63,7 +63,7 @@ public class ContextSearchService {
                             "               WHERE {" +
                             "                   GRAPH <http://lod2.tenforce.com/edcat/context/config/> {" +
                             "                       ?segment <http://persistence.uni-leipzig.org/nlp2rdf/ontologies/nif-core#referenceContext> ?ref . " +
-                            "                       ?segment <http://purl.org/dc/terms/identifier> ?tagId ." +
+                            "                       ?segment <http://www.w3.org/2005/11/its/rdf#taIdentRef> ?tagId ." +
                             "                       $where " +
                             "                   } " +
                             "               }" +
