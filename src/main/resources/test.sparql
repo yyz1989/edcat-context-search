@@ -1,0 +1,32 @@
+
+                             CONSTRUCT {
+                               ?dataset <http://purl.org/dc/terms/title> ?title.
+                               ?dataset <http://purl.org/dc/terms/description> ?description.
+                               ?dataset <http://lod2.tenforce.com/tagAmount> ?count.
+                             }
+                             WHERE {
+                               GRAPH ?dataset {
+                               ?dataset <http://lod2.tenforce.com/oldIdentifier> ?source.
+                               ?dataset <http://purl.org/dc/terms/title> ?title.
+                               ?dataset <http://purl.org/dc/terms/description> ?description.
+                               {
+                                   SELECT ?source ?count
+                                   WHERE {
+                                   GRAPH <http://lod2.tenforce.com/edcat/context/config/> {
+                                       ?ref <http://persistence.uni-leipzig.org/nlp2rdf/ontologies/nif-core#sourceUrl> ?source .
+                                       {
+                                           SELECT DISTINCT ?ref (COUNT(?tagId) AS ?count)
+                                           WHERE {
+                                               GRAPH <http://lod2.tenforce.com/edcat/context/config/> {
+                                                   ?segment <http://persistence.uni-leipzig.org/nlp2rdf/ontologies/nif-core#referenceContext> ?ref .
+                                                   ?segment <http://www.w3.org/2005/11/its/rdf#taIdentRef> ?tagId .
+                                                   filter(str(?tagId)="http://dbpedia.org/resource/Communes_of_Switzerland"||str(?tagId)="http://dbpedia.org/resource/Gemünden_am_Main")
+                                               }
+                                           }
+                                           GROUP BY ?ref
+                                       }
+                                   }
+                                   }
+                               }
+                             }
+                            }

@@ -32,23 +32,21 @@ import java.io.InputStream;
 public class ContextSearchController {
 
     private final Logger logger= LoggerFactory.getLogger(this.getClass());
-    public static final String SEARCH_PATH= "/contexts/search";
-    public static final String LOAD_PATH="/contexts/load";
-    public static final String CONTEXT_PATH="http://tfvirt-lod2-dcat/contexts";
+    public static final String SEARCH_PATH= "/context/search";
+    public static final String LOAD_PATH="/context/load";
     private final JsonLdContext jsonLdContext=new
             JsonLdContext(ContextSearchController.class.getResource("/eu/lod2/edcat/jsonld/nif.jsonld"));
 
     @Autowired
     private ContextSearchService contextSearchService;
 
-    //GET ../edcat/contexts/search?tags=tag1,tag2,tag3,...
+    //GET ../edcat/context/search?tagIds=Id1,Id2,Id3,...
     @RequestMapping(value = SEARCH_PATH, method = RequestMethod.GET,
             produces = "application/json;charset=UTF-8")
-    public ResponseEntity<Object> contextSearch(HttpServletRequest request, @RequestParam(value = "tags") String queryParams) throws Throwable{
+    public ResponseEntity<Object> contextSearch(HttpServletRequest request, @RequestParam(value = "tagIds[]") String[] tagIds) throws Throwable{
         HookManager.callHook(PreSearchHandler.class, "handlePreSearch", new PreSearchContext(request));
         JsonLdContext jsonLdContext = new JsonLdContext(JsonLdContext.Kind.Dataset);
-        String[] tags=queryParams.split(",");
-        Model statements= contextSearchService.getDatasetModel(tags);
+        Model statements= contextSearchService.getDatasetModel(tagIds);
         ResponseFormatter formatter=new CompactedListFormatter(jsonLdContext);
         Object body=formatter.format(statements);
         ResponseEntity<Object> response = new ResponseEntity<Object>(body, new HttpHeaders(), HttpStatus.OK);
@@ -56,7 +54,7 @@ public class ContextSearchController {
         return response;
     }
 
-    //POST ../edcat/contexts/load
+    //POST ../edcat/context/load
     @RequestMapping(value=LOAD_PATH, method = RequestMethod.POST,
             consumes = "application/json;charset=UTF-8")
     public ResponseEntity<Object> contextLoad(HttpServletRequest request) throws Throwable {
